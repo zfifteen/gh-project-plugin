@@ -1,3 +1,5 @@
+![GH Project hero banner](assets/gh-project-hero-comic.png)
+
 # gh-project-plugin
 
 Codex plugin bundle for low-friction GitHub repository creation with

@@ -28,6 +28,7 @@
   "files": [
     ".codex-plugin/",
     ".mcp.json",
+    "assets/",
     "mcp-server/",
     "research/",
     "release-readiness-checklist.md",
