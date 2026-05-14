@@ -62,6 +62,23 @@ If the native input surface is not available, the workflow stops. It does not
 fall back to numbered Markdown menus, hidden defaults, or a prose-only checklist.
 The point is the Codex-native flow, not a prompt pretending to be a UI.
 
+### What It Looks Like
+
+The screenshots below are real captures from a `Sofa King` demo flow. The task
+was stopped before final confirmation, so no repository was created.
+
+**1. Codex starts the flow, checks `gh`, and opens the first native menu.**
+
+![Native parent location menu](assets/screenshots/native-menu-location.png)
+
+**2. The generated repo and folder names appear as a recommended choice.**
+
+![Native inferred names menu](assets/screenshots/native-menu-names.png)
+
+**3. The generated description gets the same menu treatment.**
+
+![Native generated description menu](assets/screenshots/native-menu-description.png)
+
 ## Installation And Prerequisites
 
 This plugin expects a Codex environment with plugin and skill support.
