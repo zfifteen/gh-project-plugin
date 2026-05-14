@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GH Project Plugin Specification</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f7f4;
+      --text: #1c1c1a;
+      --muted: #5e625c;
+      --line: #d7d7cf;
+      --panel: #ffffff;
+      --accent: #0969da;
+      --code: #f0f1ed;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111314;
+        --text: #f1f2ee;
+        --muted: #b7bbb2;
+        --line: #343832;
+        --panel: #181b1c;
+        --accent: #58a6ff;
+        --code: #222624;
+      }
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 48px 24px 72px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.18;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      max-width: 760px;
+    }
+
+    h2 {
+      margin-top: 44px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+      font-size: 1.6rem;
+    }
+
+    h3 {
+      margin-top: 24px;
+      font-size: 1.05rem;
+    }
+
+    p {
+      max-width: 760px;
+    }
+
+    ul, ol {
+      padding-left: 1.4rem;
+    }
+
+    li + li {
+      margin-top: 0.35rem;
+    }
+
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    code {
+      background: var(--code);
+      border-radius: 5px;
+      padding: 0.08rem 0.28rem;
+    }
+
+    pre {
+      overflow-x: auto;
+      background: var(--code);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      line-height: 1.45;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      width: 28%;
+    }
+
+    .lede {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 1.12rem;
+    }
+
+    .callout {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--accent);
+      background: var(--panel);
+      border-radius: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 6px 6px 0;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>GH Project Plugin Specification</h1>
+    <p class="lede">
+      The plugin creates new GitHub repositories with low-friction defaults, native integrated menu choices, and explicit confirmation before any external or filesystem mutation.
+    </p>
+
+    <section>
+      <h2>Purpose</h2>
+      <p>
+        The plugin turns a request such as <code>Create a new GitHub project for Apple Mail Handler</code> into a complete repository creation workflow. It infers the likely setup, presents a native choice flow for review or edits, and creates the GitHub repository plus local clone only after explicit approval.
+      </p>
+      <p>
+        In this plugin, <strong>GitHub project</strong> means a GitHub repository by default. It does not mean a GitHub Projects board unless the user explicitly asks for one.
+      </p>
+    </section>
+
+    <section>
+      <h2>Default Contract</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>Owner</th>
+            <td>Use the active authenticated <code>gh</code> account.</td>
+          </tr>
+          <tr>
+            <th>Location</th>
+            <td><code>~/IdeaProjects</code>, expanded before collision checks.</td>
+          </tr>
+          <tr>
+            <th>Visibility</th>
+            <td>Public.</td>
+          </tr>
+          <tr>
+            <th>License</th>
+            <td>MIT.</td>
+          </tr>
+          <tr>
+            <th>Initial files</th>
+            <td>README and MIT license. No scaffold unless requested.</td>
+          </tr>
+          <tr>
+            <th>Repo features</th>
+            <td>Leave GitHub defaults unchanged. Do not toggle issues, wiki, projects, or discussions unless requested.</td>
+          </tr>
+          <tr>
+            <th>Description</th>
+            <td>Generate plain searchable text capped at 350 characters.</td>
+          </tr>
+          <tr>
+            <th>Topics</th>
+            <td>Generate 6 to 10 GitHub repository topics optimized for user search queries.</td>
+          </tr>
+          <tr>
+            <th>.gitignore</th>
+            <td>Ask every time. Recommend a template only when the implementation stack is clear.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Menu Behavior</h2>
+      <div class="callout">
+        <strong>The menu must be host-native.</strong> The plugin must use the integrated input-control surface shown in Codex planning workflows. A numbered Markdown list is not an acceptable substitute.
+      </div>
+
+      <h3>Required interaction pattern</h3>
+      <ol>
+        <li>Infer a complete creation plan before asking the user to fill fields.</li>
+        <li>Present every configurable setting in the integrated input-control UI.</li>
+        <li>Preselect inferred defaults instead of hiding them.</li>
+        <li>Ask one setting at a time.</li>
+        <li>Show the final repo creation plan before mutation.</li>
+        <li>Create the repository only after the user selects <code>Create GitHub project</code>.</li>
+      </ol>
+
+      <h3>Required setting menus</h3>
+      <ul>
+        <li>Parent location.</li>
+        <li>Repo, folder, and friendly name.</li>
+        <li>Description.</li>
+        <li>Topics.</li>
+        <li>Visibility.</li>
+        <li>License.</li>
+        <li>Initial contents.</li>
+        <li><code>.gitignore</code>.</li>
+      </ul>
+
+      <h3>Required final choices</h3>
+      <ul>
+        <li><code>Create GitHub project</code></li>
+        <li><code>Change settings</code></li>
+        <li><code>Do something else</code></li>
+      </ul>
+
+      <h3>Native menu requirement</h3>
+      <p>
+        The plugin must expose its choices through a plugin or tool surface that Codex Desktop can render as integrated input controls. If that surface is unavailable, the workflow must stop and state the blocker. It must not degrade to prose menus, Markdown numbered lists, or hidden defaults.
+      </p>
+      <p>
+        Low friction means defaults are preselected, not hidden. The user should be able to press the recommended choice repeatedly and move quickly through the wizard while still seeing every setting before creation.
+      </p>
+    </section>
+
+    <section>
+      <h2>Inferred Data Model</h2>
+      <pre><code>{
+  "owner": "zfifteen",
+  "repoName": "apple-mail-handler",
+  "friendlyName": "Apple Mail Handler",
+  "parentDirectory": "/Users/velocityworks/IdeaProjects",
+  "localPath": "/Users/velocityworks/IdeaProjects/apple-mail-handler",
+  "visibility": "public",
+  "license": "mit",
+  "addReadme": true,
+  "gitignoreTemplate": null,
+  "description": "Generated searchable description, up to 350 characters.",
+  "topics": [
+    "codex",
+    "apple-mail",
+    "applescript",
+    "github-cli",
+    "plugin",
+    "workflow-automation"
+  ]
+}</code></pre>
+    </section>
+
+    <section>
+      <h2>Execution Contract</h2>
+      <p>
+        The plugin uses one deterministic creation path through the GitHub CLI. It performs read-only checks before mutation, then runs the creation commands only after explicit confirmation.
+      </p>
+      <pre><code>gh repo create REPO --public --clone --add-readme --license mit --description "DESCRIPTION"
+gh repo edit OWNER/REPO --add-topic topic-a,topic-b,topic-c</code></pre>
+      <p>
+        Include <code>--gitignore TEMPLATE</code> only when the user selected a GitHub gitignore template. Replace <code>--public</code> or <code>--license mit</code> only when the user changed those values through the native menu.
+      </p>
+    </section>
+
+    <section>
+      <h2>Stop Conditions</h2>
+      <ul>
+        <li><code>gh</code> is missing.</li>
+        <li><code>gh</code> is unauthenticated.</li>
+        <li>The active GitHub owner cannot be resolved.</li>
+        <li>The target local folder already exists.</li>
+        <li>The target GitHub repository already exists.</li>
+        <li>The user asks for a GitHub Projects board instead of a repository.</li>
+        <li>The integrated input-control UI is unavailable when a menu decision is required.</li>
+        <li>The user has not explicitly selected <code>Create GitHub project</code>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Native Menu Research</h2>
+      <p>
+        The working implementation path is the Codex native <code>request_user_input</code> surface in Default mode. The required local feature flag is enabled in <code>/Users/velocityworks/.codex/config.toml</code> with <code>default_mode_request_user_input = true</code>. Codex Desktop must be restarted after this config change before the menu surface is available to normal chats.
+      </p>
+      <p>
+        The MCP elicitation probe remains in <a href="research/native-menu-surface.html">Native Menu Surface Research</a> as a documented failed path for this Desktop build. The plugin should not rely on MCP elicitation alone for Plan-style menus.
+      </p>
+      <pre><code>Skill text = workflow contract
+request_user_input = native integrated menu
+MCP elicitation alone = invalidated for this Desktop build</code></pre>
+    </section>
+
+    <section>
+      <h2>Search Topics</h2>
+      <p>
+        <span class="tag">codex</span>
+        <span class="tag">github</span>
+        <span class="tag">github-cli</span>
+        <span class="tag">plugin</span>
+        <span class="tag">developer-tools</span>
+        <span class="tag">project-setup</span>
+        <span class="tag">repository-automation</span>
+        <span class="tag">workflow-automation</span>
+      </p>
+    </section>
+  </main>
+</body>
+</html>
