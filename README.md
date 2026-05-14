@@ -1,56 +1,128 @@
 ![GH Project hero banner](assets/gh-project-hero-comic.png)
 
-# gh-project-plugin
+# Codex GitHub Project Wizard
 
-Codex plugin bundle for low-friction GitHub repository creation with
-default-first planning, native menu prompts, explicit confirmation,
-discoverability topics, and deterministic local cloning for new project setup.
+Turn a project idea into a real GitHub repository without dropping out of
+Codex, hunting for flags, or doing the tiny setup chores by hand.
 
-## What This Plugin Provides
+GH Project is the Codex-native repo launcher: you describe the thing you want
+to build, Codex infers a clean repository plan, and the plugin walks you through
+the decisions with native menu prompts. Tap the recommended defaults, review
+the final plan, confirm creation, and the repo appears on GitHub with a local
+clone ready to work in.
 
-`gh-project-plugin` packages the `gh-project` skill as the behavioral source of
-truth for creating GitHub repositories from Codex. The workflow infers strong
-defaults, presents every configurable setting through native menu prompts, checks
-for local and remote collisions, and creates the repository only after the user
-selects `Create GitHub project`.
+It feels like a launch button for new ideas, with guardrails.
 
-In this plugin, "GitHub project" means a GitHub repository unless the user
-explicitly asks for a GitHub Projects board.
+## The Fun Part
 
-## Prerequisites
+The normal GitHub repo setup flow has friction in all the wrong places. You
+need a repo name, folder name, description, visibility, license, README,
+`.gitignore`, topics, and a local clone. None of that is hard. All of it is
+annoying when what you actually have is momentum.
 
-- Codex with plugin and skill support.
-- Codex host support for `request_user_input` in the current chat mode. This is
-  the native menu surface used by the production workflow.
-- GitHub CLI installed as `gh`.
-- An authenticated `gh` session with permission to create repositories.
+GH Project keeps the momentum.
+
+Ask Codex for a new GitHub project and the plugin turns the request into a
+guided creation flow:
+
+- it checks `gh` and your GitHub auth first;
+- it infers a repo name, friendly name, description, topics, license, and local
+  folder;
+- it shows every configurable setting as a native Codex menu;
+- it preselects sensible defaults instead of hiding them;
+- it checks local and remote collisions before anything mutates;
+- it asks for one final `Create GitHub project` confirmation;
+- it creates the GitHub repo, local clone, README, license, `.gitignore`, and
+  topics through one deterministic `gh` path.
+
+The experience is fast because the defaults are good. It is trustworthy because
+the final mutation still requires your explicit confirmation.
+
+## Native Menu Workflow
+
+The native menu flow is the whole magic trick.
+
+Codex does not ask you to fill out a dry questionnaire. It brings up one crisp
+decision at a time:
+
+1. Parent location
+2. Repo, folder, and friendly name
+3. Description
+4. Topics
+5. Visibility
+6. License
+7. Initial contents
+8. `.gitignore`
+9. Final creation confirmation
+
+Each menu puts the recommended choice first. You can accept the default path in
+a few clicks, or stop and change the part that matters.
+
+If the native input surface is not available, the workflow stops. It does not
+fall back to numbered Markdown menus, hidden defaults, or a prose-only checklist.
+The point is the Codex-native flow, not a prompt pretending to be a UI.
+
+## Installation And Prerequisites
+
+This plugin expects a Codex environment with plugin and skill support.
+
+You also need:
+
+- GitHub CLI installed as `gh`;
+- an authenticated `gh` session that can create repositories;
+- Codex host support for `request_user_input` in the current chat mode;
 - Node.js 18 or newer for the bundled MCP probe.
 
-## Native Menu Contract
+The production workflow uses Codex's native `request_user_input` surface for
+menus. The bundled MCP server is included as a menu-surface probe and research
+artifact, not as the repository-creation engine.
 
-The seamless menu experience depends on the Codex host exposing the native
-`request_user_input` tool. The skill instructs Codex to stop if that integrated
-menu surface is unavailable. It must not degrade to numbered Markdown menus,
-hidden defaults, or a prose-only checklist.
+After installing the plugin, ask Codex for something like:
 
-The bundled MCP server is retained as a menu-surface probe. It verifies that MCP
-elicitation can make a structured round trip, but it is not the production
-repository-creation engine. Desktop testing showed MCP elicitation alone did not
-render the desired Plan-style native menu in the tested Codex Desktop build.
+```text
+Use GH Project to create a new GitHub repository for my idea.
+```
+
+Codex should load the bundled `gh-project` skill, infer the repo plan, and walk
+you through the native menus before creating anything.
 
 ## Safety Contract
 
-The workflow is intentionally narrow:
+GH Project is intentionally narrow. It creates GitHub repositories, not GitHub
+Projects boards, unless you explicitly ask for a board.
 
-- resolve `gh --version` and `gh auth status` before planning;
-- infer defaults, then show every configurable setting;
-- check local folder and GitHub repository collisions before mutation;
-- create only after explicit `Create GitHub project` confirmation;
-- use one deterministic `gh repo create` path;
-- add topics with `gh repo edit`;
-- stop on blockers instead of trying alternate creation paths.
+The repo creation path is boring on purpose:
 
-## Validation
+```bash
+gh repo create REPO --public --clone --add-readme --license mit --description "DESCRIPTION"
+gh repo edit OWNER/REPO --add-topic topic-a,topic-b,topic-c
+```
+
+The skill changes those flags only when you choose different settings in the
+native menus. If `gh` is missing, auth is missing, the folder already exists, the
+repo already exists, or the native menu surface is unavailable, it stops and
+tells you the blocker.
+
+No alternate backend. No silent fallback. No accidental repo creation.
+
+## How The Plugin Is Built
+
+GH Project is a plugin bundle with a skill at its center:
+
+- `.codex-plugin/plugin.json` describes the plugin for Codex.
+- `skills/gh-project/SKILL.md` is the behavior contract and source of truth.
+- `.mcp.json` registers the bundled MCP server.
+- `mcp-server/server.mjs` exposes the native-menu probe.
+- `scripts/probe-client.mjs` verifies the MCP elicitation round trip.
+- `spec.html` records the product contract.
+- `research/native-menu-surface.html` records the menu-surface research and the
+  invalidated MCP-only production path for the tested Desktop build.
+
+The distinction matters: the skill defines the repo creation workflow. The MCP
+server proves and preserves the native-menu research path. Codex host support
+for `request_user_input` provides the production menu UX.
+
+## Local Validation
 
 Run the local probe and package dry run before publishing changes:
 
@@ -67,7 +139,7 @@ diff -u /Users/velocityworks/.codex/skills/gh-project/SKILL.md skills/gh-project
 codex mcp list
 ```
 
-## Specification
+## Project Docs
 
 - [Plugin specification](spec.html)
 - [Native menu surface research](research/native-menu-surface.html)
