@@ -136,23 +136,6 @@ The distinction matters: the skill defines the repo creation workflow. The MCP
 server proves and preserves the native-menu research path. Codex provides the
 production menu UX.
 
-## Local Validation
-
-Run the local probe and package dry run before publishing changes:
-
-```bash
-npm run probe
-npm run pack:dry-run
-```
-
-Full local validation:
-
-```bash
-npm run validate
-diff -u /Users/velocityworks/.codex/skills/gh-project/SKILL.md skills/gh-project/SKILL.md
-codex mcp list
-```
-
 ## Project Docs
 
 - [Plugin specification](spec.html)
