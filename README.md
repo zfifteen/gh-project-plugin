@@ -85,14 +85,11 @@ This plugin expects a Codex environment with plugin and skill support.
 
 You also need:
 
-- GitHub CLI installed as `gh`;
-- an authenticated `gh` session that can create repositories;
-- Codex host support for `request_user_input` in the current chat mode;
-- Node.js 18 or newer for the bundled MCP probe.
+- GitHub CLI.
 
-The production workflow uses Codex's native `request_user_input` surface for
-menus. The bundled MCP server is included as a menu-surface probe and research
-artifact, not as the repository-creation engine.
+The production workflow uses Codex's native menu surface. The bundled MCP server
+is included as a menu-surface probe and research artifact, not as the
+repository-creation engine.
 
 After installing the plugin, ask Codex for something like:
 
@@ -136,8 +133,8 @@ GH Project is a plugin bundle with a skill at its center:
   invalidated MCP-only production path for the tested Desktop build.
 
 The distinction matters: the skill defines the repo creation workflow. The MCP
-server proves and preserves the native-menu research path. Codex host support
-for `request_user_input` provides the production menu UX.
+server proves and preserves the native-menu research path. Codex provides the
+production menu UX.
 
 ## Local Validation
 
