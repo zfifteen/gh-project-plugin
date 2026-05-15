@@ -1,6 +1,6 @@
 {
   "name": "gh-project-plugin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Codex plugin bundle for creating GitHub repositories with low-friction defaults and native menu prompts.",
   "license": "MIT",
   "type": "module",
@@ -17,7 +17,6 @@
     "codex-plugin",
     "github",
     "github-cli",
-    "mcp",
     "repository",
     "project-setup",
     "workflow-automation"
@@ -27,23 +26,13 @@
   },
   "files": [
     ".codex-plugin/",
-    ".mcp.json",
     "assets/",
-    "mcp-server/",
-    "research/",
     "release-readiness-checklist.md",
-    "scripts/",
     "skills/",
     "spec.html"
   ],
   "scripts": {
-    "mcp": "node mcp-server/server.mjs",
-    "probe": "node scripts/probe-client.mjs",
     "pack:dry-run": "npm pack --dry-run",
-    "validate": "npm run probe && npm run pack:dry-run"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "1.29.0",
-    "zod": "4.4.3"
+    "validate": "npm run pack:dry-run"
   }
 }

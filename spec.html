@@ -298,16 +298,12 @@ gh repo edit OWNER/REPO --add-topic topic-a,topic-b,topic-c</code></pre>
     </section>
 
     <section>
-      <h2>Native Menu Research</h2>
+      <h2>Native Menu Surface</h2>
       <p>
         The working implementation path is the Codex native <code>request_user_input</code> surface in Default mode. The required local feature flag is enabled in <code>/Users/velocityworks/.codex/config.toml</code> with <code>default_mode_request_user_input = true</code>. Codex Desktop must be restarted after this config change before the menu surface is available to normal chats.
       </p>
-      <p>
-        The MCP elicitation probe remains in <a href="research/native-menu-surface.html">Native Menu Surface Research</a> as a documented failed path for this Desktop build. The plugin should not rely on MCP elicitation alone for Plan-style menus.
-      </p>
       <pre><code>Skill text = workflow contract
-request_user_input = native integrated menu
-MCP elicitation alone = invalidated for this Desktop build</code></pre>
+request_user_input = native integrated menu</code></pre>
     </section>
 
     <section>

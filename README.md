@@ -87,9 +87,7 @@ You also need:
 
 - GitHub CLI.
 
-The production workflow uses Codex's native menu surface. The bundled MCP server
-is included as a menu-surface probe and research artifact, not as the
-repository-creation engine.
+The production workflow uses Codex's native menu surface.
 
 After installing the plugin, ask Codex for something like:
 
@@ -125,19 +123,12 @@ GH Project is a plugin bundle with a skill at its center:
 
 - `.codex-plugin/plugin.json` describes the plugin for Codex.
 - `skills/gh-project/SKILL.md` is the behavior contract and source of truth.
-- `.mcp.json` registers the bundled MCP server.
-- `mcp-server/server.mjs` exposes the native-menu probe.
-- `scripts/probe-client.mjs` verifies the MCP elicitation round trip.
 - `spec.html` records the product contract.
-- `research/native-menu-surface.html` records the menu-surface research and the
-  invalidated MCP-only production path for the tested Desktop build.
 
-The distinction matters: the skill defines the repo creation workflow. The MCP
-server proves and preserves the native-menu research path. Codex provides the
-production menu UX.
+The skill defines the repo creation workflow. Codex provides the production menu
+UX.
 
 ## Project Docs
 
 - [Plugin specification](spec.html)
-- [Native menu surface research](research/native-menu-surface.html)
 - [Release readiness checklist](release-readiness-checklist.md)

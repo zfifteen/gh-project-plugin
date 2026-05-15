@@ -1,20 +1,19 @@
 {
   "name": "gh-project-plugin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Create GitHub repositories with low-friction defaults and native Codex menu prompts.",
   "keywords": [
     "codex",
     "github",
     "repository",
-    "mcp",
-    "elicitation"
+    "github-cli",
+    "native-menus"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "GH Project",
     "shortDescription": "Create GitHub repos with native menus",
-    "longDescription": "A Codex plugin bundle that packages the gh-project skill, plugin metadata, and an MCP elicitation probe for creating GitHub repositories with inferred defaults, explicit confirmation, and native request_user_input menus when the Codex host exposes that surface.",
+    "longDescription": "A Codex plugin bundle that packages the gh-project skill and plugin metadata for creating GitHub repositories with inferred defaults, explicit confirmation, and native request_user_input menus when the Codex host exposes that surface.",
     "developerName": "Velocity Works",
     "category": "Productivity",
     "capabilities": [
